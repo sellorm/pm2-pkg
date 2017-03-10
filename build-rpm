@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+fpmExists=$(which fpm >/dev/null 2>&1 ; echo $?)
+if [[ ${fpmExists} -ne 0 ]];then
+    echo 'fpm is not installed, exiting.'
+    exit 1
+fi
+
+if [[ $1 != "local" ]]; then
+  cd /build
+fi
+
+cd slash/opt/pm2
+./bin/npm install pm2 -g
+cd -
+
+fpm -s dir -t rpm -C ./slash/ \
+    --verbose \
+    --name pm2 \
+    --version 2.4.2 \
+    --iteration 1 \
+    --after-install 'slash/opt/spark/extras/after-install.sh' \
+    --after-remove 'slash/opt/spark/extras/after-remove.sh' \
+    --vendor 'sellorm' \
+    --license 'GPL v3' \
+    --maintainer 'pm2-pkg@5vcc.com' \
+    --url 'https://github.com/sellorm/pm2-pkg' \
+    --description "Packaged version of the pm2 process manager" .
+
+# rpm -qpRi --provides --scripts ./pm2-2.4.2-1.x86_64.rpm

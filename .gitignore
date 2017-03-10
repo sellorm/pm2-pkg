@@ -1,0 +1,8 @@
+slash/opt/pm2/CHANGELOG.md
+slash/opt/pm2/LICENSE
+slash/opt/pm2/README.md
+slash/opt/pm2/bin
+slash/opt/pm2/include
+slash/opt/pm2/lib
+slash/opt/pm2/share
+*.rpm

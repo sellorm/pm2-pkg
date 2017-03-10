@@ -1,0 +1,8 @@
+[Unit]
+Description=pm2 Service
+
+[Service]
+ExecStart=/bin/bash -c "/opt/spark/extras/pm2-start"
+
+[Install]
+WantedBy=multiuser.target
