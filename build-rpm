@@ -9,7 +9,11 @@ if [[ $1 != "local" ]]; then
   cd /build
 fi
 
+./get-node.sh
+
 cd slash/opt/pm2
+export PATH=/build/slash/opt/pm2/bin/:${PATH}
+echo "Get pm2"
 ./bin/npm install pm2 -g
 cd -
 
@@ -18,8 +22,8 @@ fpm -s dir -t rpm -C ./slash/ \
     --name pm2 \
     --version 2.4.2 \
     --iteration 1 \
-    --after-install 'slash/opt/spark/extras/after-install.sh' \
-    --after-remove 'slash/opt/spark/extras/after-remove.sh' \
+    --after-install 'slash/opt/pm2/extras/after-install.sh' \
+    --after-remove 'slash/opt/pm2/extras/after-remove.sh' \
     --vendor 'sellorm' \
     --license 'GPL v3' \
     --maintainer 'pm2-pkg@5vcc.com' \

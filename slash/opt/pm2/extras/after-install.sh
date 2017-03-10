@@ -4,6 +4,7 @@
 # add the pm2 user
 useradd pm2 
 
+cp /opt/pm2/extras/pm2.sh /etc/profile.d/
 source /etc/profile.d/pm2.sh
 
 cp /opt/spark/extras/pm2.service /usr/lib/systemd/system/
