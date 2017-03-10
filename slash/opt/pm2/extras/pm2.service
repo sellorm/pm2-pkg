@@ -2,7 +2,7 @@
 Description=pm2 Service
 
 [Service]
-ExecStart=/bin/bash -c "/opt/spark/extras/pm2-start"
+ExecStart=/bin/bash -c "/opt/pm2/extras/pm2-start"
 
 [Install]
 WantedBy=multiuser.target
