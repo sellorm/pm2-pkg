@@ -1,27 +1,77 @@
 #!/usr/bin/env bash
+# config
+VERSION=2.4.2
+ITERATION=1
+
+
+# Main stuff
+cd /build
+# set up functions
+function getcontents {
+    ./get-node.sh
+    cd slash/opt/pm2
+    export PATH=/build/slash/opt/pm2/bin/:${PATH}
+    echo "Get pm2"
+    ./bin/npm install pm2 -g
+    cd -
+}
+
+# display help
+function help {
+    echo "Error: no option specified."
+    echo
+    echo "Usage: ${basename} <all|pkgs|clean|help>"
+    echo
+    echo "    all     downloads the contents before building the packages"
+    echo "    pkgs    package build only"
+    echo "    clean   clean up downloaded pkg contents"
+    echo "    help    this help text"
+    exit 1
+}
+
+# clean up afterwards
+function clean {
+  rm -rf slash/opt/pm2/CHANGELOG.md
+  rm -rf slash/opt/pm2/LICENSE
+  rm -rf slash/opt/pm2/README.md
+  rm -rf slash/opt/pm2/bin
+  rm -rf slash/opt/pm2/include
+  rm -rf slash/opt/pm2/lib
+  rm -rf slash/opt/pm2/share
+  rm -rf *.rpm
+  rm -rf *.deb
+  exit 0
+}
+
+# check input params
+case ${1} in
+  all)
+    getcontents
+    ;;
+  pkgs)
+    ;;
+  clean)
+    clean
+    ;;
+  help|*)
+    help
+    ;;
+esac
+
+# check that fpm exists
 fpmExists=$(which fpm >/dev/null 2>&1 ; echo $?)
 if [[ ${fpmExists} -ne 0 ]];then
     echo 'fpm is not installed, exiting.'
     exit 1
 fi
 
-if [[ $1 != "local" ]]; then
-  cd /build
-fi
-
-./get-node.sh
-
-cd slash/opt/pm2
-export PATH=/build/slash/opt/pm2/bin/:${PATH}
-echo "Get pm2"
-./bin/npm install pm2 -g
-cd -
-
+# build the rpm
+# rpm -qpRi --provides --scripts ./pm2-2.4.2-1.x86_64.rpm
 fpm -s dir -t rpm -C ./slash/ \
     --verbose \
     --name pm2 \
-    --version 2.4.2 \
-    --iteration 1 \
+    --version ${VERSION} \
+    --iteration ${ITERATION} \
     --after-install 'slash/opt/pm2/extras/after-install.sh' \
     --after-remove 'slash/opt/pm2/extras/after-remove.sh' \
     --vendor 'sellorm' \
@@ -30,4 +80,18 @@ fpm -s dir -t rpm -C ./slash/ \
     --url 'https://github.com/sellorm/pm2-pkg' \
     --description "Packaged version of the pm2 process manager" .
 
-# rpm -qpRi --provides --scripts ./pm2-2.4.2-1.x86_64.rpm
+
+
+# build the deb
+fpm -s dir -t deb -C ./slash/ \
+    --verbose \
+    --name pm2 \
+    --version ${VERSION} \
+    --iteration ${ITERATION} \
+    --after-install 'slash/opt/pm2/extras/after-install.sh' \
+    --after-remove 'slash/opt/pm2/extras/after-remove.sh' \
+    --vendor 'sellorm' \
+    --license 'GPL v3' \
+    --maintainer 'pm2-pkg@5vcc.com' \
+    --url 'https://github.com/sellorm/pm2-pkg' \
+    --description "Packaged version of the pm2 process manager" .
