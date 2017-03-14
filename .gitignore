@@ -8,3 +8,4 @@ slash/opt/pm2/lib
 slash/opt/pm2/share
 *.rpm
 *.deb
+.DS_Store
